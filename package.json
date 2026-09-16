@@ -1,0 +1,17 @@
+{
+  "name": "court-checker",
+  "version": "1.0.0",
+  "description": "福岡市テニスコート（舞鶴公園・汐井公園）空き照会ボット",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "codegen": "playwright codegen https://www3.11489.jp/fukuoka/user/Home"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}
