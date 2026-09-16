@@ -4,9 +4,10 @@ const { chromium } = require("playwright");
 const settings = require("../config/settings");
 const { searchOutdoorTennis, selectFacilities } = require("./steps/search");
 const { filterResults } = require("./steps/filterResults");
-const { collectAllAvailability } = require("./steps/collectAvailability");
-const { mergeConsecutiveSlots } = require("./lib/formatSlots");
+const { collectAllAvailability, listAllDates } = require("./steps/collectAvailability");
+const { normalizeSlot, mergeNormalizedSlots } = require("./lib/formatSlots");
 const { buildHtml } = require("./lib/buildHtml");
+const { loadPreviousSnapshot, saveSnapshot, computeNewlyVacantSlots } = require("./lib/snapshot");
 
 function tomorrowAsYyyyMmDd() {
   const d = new Date();
@@ -24,6 +25,7 @@ async function main() {
   page.setDefaultTimeout(30000);
 
   let rawSlots = [];
+  let coveredDates = [];
 
   // トップページから「施設別空き状況が表示された状態」までを一気に行う。
   // 空きコマが多い場合、時間帯別空き状況を複数バッチに分けて見に行く必要が
@@ -40,6 +42,10 @@ async function main() {
 
   try {
     await navigate();
+
+    // 施設別空き状況グリッドが表示された直後に、今回の照会がカバーする
+    // (施設, 日付) を空き状況に関わらず全て記録しておく（増加分判定の基準）。
+    coveredDates = await listAllDates(page);
 
     // 施設別空き状況 → 時間帯別空き状況 を巡回して空きコマを収集
     rawSlots = await collectAllAvailability(page, {
@@ -58,14 +64,37 @@ async function main() {
     await browser.close();
   }
 
-  const mergedSlots = mergeConsecutiveSlots(rawSlots);
-  const html = buildHtml(mergedSlots, settings.facilityNames, new Date());
+  const normalizedSlots = rawSlots.map(normalizeSlot);
+  const mergedSlots = mergeNormalizedSlots(normalizedSlots);
+
+  const snapshotPath = path.resolve(__dirname, "..", settings.previousSnapshotPath);
+  const previousSnapshot = loadPreviousSnapshot(snapshotPath);
+  const { hasPrevious, previousGeneratedAt, newSlots } = computeNewlyVacantSlots(
+    previousSnapshot,
+    normalizedSlots
+  );
+  const increaseSlots = mergeNormalizedSlots(newSlots);
+
+  const generatedAt = new Date();
+  const html = buildHtml(mergedSlots, settings.facilityNames, generatedAt, {
+    hasPrevious,
+    previousGeneratedAt,
+    increaseSlots,
+  });
 
   const outputPath = path.resolve(__dirname, "..", settings.outputPath);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, html, "utf-8");
 
-  console.log(`空きコマ ${mergedSlots.length} 件を ${outputPath} に出力しました。`);
+  saveSnapshot(snapshotPath, {
+    generatedAt: generatedAt.toISOString(),
+    coveredDates,
+    slots: normalizedSlots,
+  });
+
+  console.log(
+    `空きコマ ${mergedSlots.length} 件（うち増加分 ${increaseSlots.length} 件）を ${outputPath} に出力しました。`
+  );
 }
 
 main().catch((err) => {

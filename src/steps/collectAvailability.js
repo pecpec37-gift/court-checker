@@ -46,6 +46,36 @@ async function listAvailableCandidates(page) {
 }
 
 /**
+ * 施設別空き状況グリッドに表示されている (施設名, 日付) を、空き状況に
+ * 関わらず全て一覧にする。今回の照会が「どの日付までをカバーしたか」を
+ * 記録し、次回実行時に増加分を判定する際の基準（前回もあった日付か）に
+ * 使う。
+ */
+async function listAllDates(page) {
+  return page.evaluate(() => {
+    const results = [];
+    const tables = Array.from(document.querySelectorAll("table.table-schedule"));
+    const facilityTitles = Array.from(document.querySelectorAll("h3.facility-title"));
+
+    tables.forEach((table, tableIndex) => {
+      const facilityName = facilityTitles[tableIndex]
+        ? facilityTitles[tableIndex].textContent.trim()
+        : null;
+
+      const useDateInputs = Array.from(table.querySelectorAll('input[name$=".UseDate"]'));
+      useDateInputs.forEach((input) => {
+        results.push({
+          facilityName,
+          date: input.value.slice(0, 10),
+        });
+      });
+    });
+
+    return results;
+  });
+}
+
+/**
  * 施設別空き状況グリッド上で、指定した (施設名, 日付) の組み合わせの
  * マスだけをチェックする。
  *
@@ -221,6 +251,7 @@ async function collectAllAvailability(page, { batchSize, navigate }) {
 
 module.exports = {
   listAvailableCandidates,
+  listAllDates,
   selectCandidates,
   parseTimeDetailPage,
   collectAllAvailability,

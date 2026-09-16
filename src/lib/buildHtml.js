@@ -24,12 +24,12 @@ function formatUpdatedAt(date) {
   return `${y}年${m}月${d}日 ${hh}:${mm} JST`;
 }
 
-function buildFacilitySection(facilityName, slots) {
+function buildFacilitySection(facilityName, slots, emptyMessage) {
   if (slots.length === 0) {
     return `
     <section class="facility">
       <h2>${escapeHtml(facilityName)}</h2>
-      <p class="empty">空いているコマは見つかりませんでした。</p>
+      <p class="empty">${escapeHtml(emptyMessage)}</p>
     </section>`;
   }
 
@@ -67,18 +67,67 @@ function buildFacilitySection(facilityName, slots) {
     </section>`;
 }
 
+function buildIncreaseSection(increaseSlots, facilityNames, comparisonInfo) {
+  const { hasPrevious, previousGeneratedAt } = comparisonInfo;
+
+  if (!hasPrevious) {
+    return `
+  <section class="increase">
+    <h2>🆕 前回から増えた空き</h2>
+    <p class="empty">なし（初回のため比較データがありません）</p>
+  </section>`;
+  }
+
+  const compareNote = `<p class="compare-note">前回 ${formatUpdatedAt(
+    new Date(previousGeneratedAt)
+  )} との比較</p>`;
+
+  if (increaseSlots.length === 0) {
+    return `
+  <section class="increase">
+    <h2>🆕 前回から増えた空き</h2>
+    ${compareNote}
+    <p class="empty">なし</p>
+  </section>`;
+  }
+
+  const sections = facilityNames
+    .map((facilityName) => {
+      const slots = increaseSlots.filter((s) => s.facilityName === facilityName);
+      if (slots.length === 0) return "";
+      return buildFacilitySection(facilityName, slots, "なし");
+    })
+    .join("\n");
+
+  return `
+  <section class="increase">
+    <h2>🆕 前回から増えた空き</h2>
+    ${compareNote}
+    ${sections}
+  </section>`;
+}
+
 /**
  * @param {Array} mergedSlots formatSlots.mergeConsecutiveSlots() の結果
  * @param {string[]} facilityNames 表示順に並べる施設名一覧
  * @param {Date} generatedAt 生成日時
+ * @param {{ hasPrevious: boolean, previousGeneratedAt: string|null, increaseSlots: Array }} comparisonInfo
+ *   前回スナップショットとの比較結果。increaseSlots は前回から増えたコマ
+ *   （formatSlots.mergeNormalizedSlots() 済み）。
  */
-function buildHtml(mergedSlots, facilityNames, generatedAt) {
+function buildHtml(mergedSlots, facilityNames, generatedAt, comparisonInfo) {
   const sections = facilityNames
     .map((facilityName) => {
       const slots = mergedSlots.filter((s) => s.facilityName === facilityName);
-      return buildFacilitySection(facilityName, slots);
+      return buildFacilitySection(facilityName, slots, "空いているコマは見つかりませんでした。");
     })
     .join("\n");
+
+  const increaseSection = buildIncreaseSection(
+    comparisonInfo.increaseSlots,
+    facilityNames,
+    comparisonInfo
+  );
 
   return `<!DOCTYPE html>
 <html lang="ja">
@@ -172,11 +221,47 @@ function buildHtml(mergedSlots, facilityNames, generatedAt) {
     font-size: 13px;
     margin-top: 24px;
   }
+  .increase {
+    background: #fff8e1;
+    border: 2px solid #f9a825;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  .increase h2 {
+    font-size: 21px;
+    margin: 0 0 4px;
+    color: #e65100;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .increase .compare-note {
+    color: #8a6d00;
+    font-size: 14px;
+    margin: 0 0 12px;
+  }
+  .increase .facility {
+    box-shadow: none;
+    padding: 0;
+    margin-bottom: 12px;
+  }
+  .increase .facility:last-child {
+    margin-bottom: 0;
+  }
+  .increase .facility h2 {
+    font-size: 17px;
+    color: #e65100;
+    border-bottom: 1px solid #f9a825;
+  }
+  .increase .slot {
+    background: #fff3cd;
+  }
 </style>
 </head>
 <body>
   <h1>福岡市テニスコート 空き状況</h1>
   <p class="updated">最終更新: ${formatUpdatedAt(generatedAt)}</p>
+  ${increaseSection}
   ${sections}
   <footer>舞鶴公園・汐井公園（翌日から1ヶ月／土日祝のみ）を自動照会しています。</footer>
 </body>

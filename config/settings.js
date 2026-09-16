@@ -19,4 +19,8 @@ module.exports = {
 
   // 出力するHTMLファイルの出力先
   outputPath: "docs/index.html",
+
+  // 前回実行時の空き状況スナップショットの保存先
+  // （「前回から増えた空き」の判定に使う）
+  previousSnapshotPath: "data/previous.json",
 };

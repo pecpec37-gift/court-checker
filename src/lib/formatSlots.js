@@ -44,10 +44,10 @@ function minutesToHms(minutes) {
 /**
  * 施設・日付・コートごとにグルーピングし、隣り合う空き時間帯を
  * 一つの範囲にまとめる。
+ *
+ * @param {Array} normalized normalizeSlot() 済みのコマ一覧
  */
-function mergeConsecutiveSlots(rawSlots) {
-  const normalized = rawSlots.map(normalizeSlot);
-
+function mergeNormalizedSlots(normalized) {
   const groups = new Map();
   for (const slot of normalized) {
     const key = [
@@ -98,4 +98,11 @@ function mergeConsecutiveSlots(rawSlots) {
   }));
 }
 
-module.exports = { mergeConsecutiveSlots };
+/**
+ * 従来どおり、生データ（コマ単位）からまとめ済みの範囲一覧を作る。
+ */
+function mergeConsecutiveSlots(rawSlots) {
+  return mergeNormalizedSlots(rawSlots.map(normalizeSlot));
+}
+
+module.exports = { normalizeSlot, mergeNormalizedSlots, mergeConsecutiveSlots };
