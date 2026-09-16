@@ -6,12 +6,22 @@ function escapeHtml(text) {
 }
 
 function formatUpdatedAt(date) {
-  const y = date.getFullYear();
-  const m = date.getMonth() + 1;
-  const d = date.getDate();
-  const hh = String(date.getHours()).padStart(2, "0");
-  const mm = String(date.getMinutes()).padStart(2, "0");
-  return `${y}年${m}月${d}日 ${hh}:${mm}`;
+  const parts = new Intl.DateTimeFormat("ja-JP", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const get = (type) => parts.find((p) => p.type === type).value;
+  const y = get("year");
+  const m = get("month");
+  const d = get("day");
+  const hh = get("hour").padStart(2, "0");
+  const mm = get("minute").padStart(2, "0");
+  return `${y}年${m}月${d}日 ${hh}:${mm} JST`;
 }
 
 function buildFacilitySection(facilityName, slots) {
