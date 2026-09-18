@@ -24,6 +24,15 @@ function formatUpdatedAt(date) {
   return `${y}年${m}月${d}日 ${hh}:${mm} JST`;
 }
 
+// courtName は「テニスコート（1番コート）」「テニスコート(テニスコート１)」の
+// ように「テニスコート」＋カッコ書きのコート番号という形式なので、カッコの
+// 中身だけを取り出して施設名と組み合わせる（例: 舞鶴公園（1番コート））。
+function courtDisplayLabel(facilityName, courtName) {
+  const match = String(courtName).match(/[（(]([^）)]*)[）)]/);
+  const courtLabel = match ? match[1] : courtName;
+  return `${facilityName}（${courtLabel}）`;
+}
+
 function buildFacilitySection(facilityName, slots, emptyMessage) {
   if (slots.length === 0) {
     return `
@@ -46,7 +55,7 @@ function buildFacilitySection(facilityName, slots, emptyMessage) {
         .map(
           (s) => `
         <li class="slot">
-          <span class="court">${escapeHtml(s.courtName)}</span>
+          <span class="court">${escapeHtml(courtDisplayLabel(facilityName, s.courtName))}</span>
           <span class="time">${s.startLabel}〜${s.endLabel}（${s.durationHours}時間）</span>
         </li>`
         )
@@ -263,7 +272,7 @@ function buildHtml(mergedSlots, facilityNames, generatedAt, comparisonInfo) {
   <p class="updated">最終更新: ${formatUpdatedAt(generatedAt)}</p>
   ${increaseSection}
   ${sections}
-  <footer>舞鶴公園・汐井公園（翌日から1ヶ月／土日祝のみ）を自動照会しています。</footer>
+  <footer>舞鶴公園・汐井公園（翌日から45日間／土日祝のみ）を自動照会しています。</footer>
 </body>
 </html>
 `;

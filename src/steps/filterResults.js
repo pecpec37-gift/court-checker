@@ -1,10 +1,11 @@
 /**
- * 表示期間を「1ヶ月」にし、対象曜日（土・日・祝）で絞り込んで
- * 施設別空き状況（table.table-schedule）を表示する。
+ * 表示期間を開始日・期間ラベル（サイトのプリセット「1日」「1週間」
+ * 「2週間」「1ヶ月」のいずれか）で設定し、対象曜日（土・日・祝）で
+ * 絞り込んで施設別空き状況（table.table-schedule）を表示する。
  */
-async function filterResults(page, { startDate, targetDaysOfWeek }) {
+async function filterResults(page, { startDate, targetDaysOfWeek, periodLabel }) {
   await page.getByRole("textbox", { name: "表示期間" }).fill(startDate);
-  await page.getByText("1ヶ月", { exact: true }).click();
+  await page.getByText(periodLabel, { exact: true }).click();
 
   await page.getByRole("button", { name: "その他の条件で絞り込む" }).click();
   for (const day of targetDaysOfWeek) {
