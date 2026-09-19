@@ -7,6 +7,7 @@ const { filterResults } = require("./steps/filterResults");
 const { collectAllAvailability, listAllDates } = require("./steps/collectAvailability");
 const { normalizeSlot, mergeNormalizedSlots } = require("./lib/formatSlots");
 const { buildHtml } = require("./lib/buildHtml");
+const { isSatSunHoliday } = require("./lib/jpHoliday");
 const { loadPreviousSnapshot, saveSnapshot, computeNewlyVacantSlots } = require("./lib/snapshot");
 
 function tomorrowAsDate() {
@@ -74,6 +75,33 @@ function dedupeNormalizedSlots(slots) {
   return result;
 }
 
+/**
+ * 保険: サイト側の絞り込みが漏れても、土曜・日曜・日本の祝日
+ * （振替休日・国民の休日を含む）以外はここで除外する。除外したらログに出す。
+ */
+function keepOnlySatSunHoliday(coveredDates, slots) {
+  const droppedDates = new Set();
+  const keptCovered = coveredDates.filter((c) => {
+    const [y, m, d] = c.date.split("-").map(Number);
+    if (isSatSunHoliday(y, m, d)) return true;
+    droppedDates.add(c.date);
+    return false;
+  });
+  const keptSlots = slots.filter((s) => {
+    if (isSatSunHoliday(s.year, s.month, s.day)) return true;
+    droppedDates.add(`${s.year}-${String(s.month).padStart(2, "0")}-${String(s.day).padStart(2, "0")}`);
+    return false;
+  });
+  if (droppedDates.size > 0) {
+    console.warn(
+      `[土日祝フィルタ] 土日祝以外の日を除外しました（サイト側の絞り込み漏れ）: ${[...droppedDates].sort().join(", ")}`
+    );
+  } else {
+    console.log("[土日祝フィルタ] 除外なし（全て土日祝）");
+  }
+  return { coveredDates: keptCovered, slots: keptSlots };
+}
+
 async function main() {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
@@ -131,6 +159,7 @@ async function main() {
   // (施設, 日付) 単位・コマ単位でそれぞれ重複を除いておく。
   coveredDates = dedupeCoveredDates(coveredDates);
   normalizedSlots = dedupeNormalizedSlots(normalizedSlots);
+  ({ coveredDates, slots: normalizedSlots } = keepOnlySatSunHoliday(coveredDates, normalizedSlots));
 
   const mergedSlots = mergeNormalizedSlots(normalizedSlots);
 
