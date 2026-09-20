@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T01:31:34.677Z",
+  "generatedAt": "2026-09-20T02:32:13.579Z",
   "coveredDates": [
     {
       "facilityName": "舞鶴公園",
@@ -153,16 +153,6 @@
       "facilityName": "舞鶴公園",
       "year": 2026,
       "month": 9,
-      "day": 21,
-      "weekLabel": "月",
-      "courtName": "テニスコート（3番コート）",
-      "timeFrom": 540,
-      "timeTo": 600
-    },
-    {
-      "facilityName": "舞鶴公園",
-      "year": 2026,
-      "month": 9,
       "day": 22,
       "weekLabel": "火",
       "courtName": "テニスコート（2番コート）",
@@ -225,29 +215,9 @@
       "month": 9,
       "day": 27,
       "weekLabel": "日",
-      "courtName": "テニスコート（2番コート）",
-      "timeFrom": 540,
-      "timeTo": 600
-    },
-    {
-      "facilityName": "舞鶴公園",
-      "year": 2026,
-      "month": 9,
-      "day": 27,
-      "weekLabel": "日",
-      "courtName": "テニスコート（2番コート）",
-      "timeFrom": 600,
-      "timeTo": 660
-    },
-    {
-      "facilityName": "舞鶴公園",
-      "year": 2026,
-      "month": 9,
-      "day": 27,
-      "weekLabel": "日",
-      "courtName": "テニスコート（3番コート）",
-      "timeFrom": 720,
-      "timeTo": 780
+      "courtName": "テニスコート（1番コート）",
+      "timeFrom": 900,
+      "timeTo": 960
     },
     {
       "facilityName": "舞鶴公園",
