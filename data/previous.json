@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T12:31:35.940Z",
+  "generatedAt": "2026-09-23T13:31:23.700Z",
   "coveredDates": [
     {
       "facilityName": "舞鶴公園",
@@ -219,21 +219,21 @@
       "facilityName": "汐井公園",
       "year": 2026,
       "month": 10,
-      "day": 10,
-      "weekLabel": "土",
+      "day": 4,
+      "weekLabel": "日",
       "courtName": "テニスコート(テニスコート３)",
-      "timeFrom": 900,
-      "timeTo": 960
+      "timeFrom": 660,
+      "timeTo": 720
     },
     {
       "facilityName": "汐井公園",
       "year": 2026,
       "month": 10,
-      "day": 10,
-      "weekLabel": "土",
-      "courtName": "テニスコート(テニスコート３)",
-      "timeFrom": 960,
-      "timeTo": 1020
+      "day": 11,
+      "weekLabel": "日",
+      "courtName": "テニスコート(テニスコート２)",
+      "timeFrom": 720,
+      "timeTo": 780
     },
     {
       "facilityName": "汐井公園",
@@ -249,21 +249,21 @@
       "facilityName": "汐井公園",
       "year": 2026,
       "month": 10,
-      "day": 17,
-      "weekLabel": "土",
-      "courtName": "テニスコート(テニスコート２)",
-      "timeFrom": 900,
-      "timeTo": 960
+      "day": 11,
+      "weekLabel": "日",
+      "courtName": "テニスコート(テニスコート４)",
+      "timeFrom": 840,
+      "timeTo": 900
     },
     {
       "facilityName": "汐井公園",
       "year": 2026,
       "month": 10,
-      "day": 17,
-      "weekLabel": "土",
-      "courtName": "テニスコート(テニスコート２)",
-      "timeFrom": 960,
-      "timeTo": 1020
+      "day": 12,
+      "weekLabel": "月",
+      "courtName": "テニスコート(テニスコート１)",
+      "timeFrom": 780,
+      "timeTo": 840
     },
     {
       "facilityName": "汐井公園",
