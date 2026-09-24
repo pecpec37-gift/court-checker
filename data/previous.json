@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T23:31:18.451Z",
+  "generatedAt": "2026-09-24T00:31:21.907Z",
   "coveredDates": [
     {
       "facilityName": "舞鶴公園",
@@ -38,6 +38,10 @@
       "date": "2026-10-18"
     },
     {
+      "facilityName": "舞鶴公園",
+      "date": "2026-10-24"
+    },
+    {
       "facilityName": "汐井公園",
       "date": "2026-09-26"
     },
@@ -74,7 +78,7 @@
       "date": "2026-10-18"
     },
     {
-      "facilityName": "舞鶴公園",
+      "facilityName": "汐井公園",
       "date": "2026-10-24"
     },
     {
@@ -94,8 +98,8 @@
       "date": "2026-11-03"
     },
     {
-      "facilityName": "汐井公園",
-      "date": "2026-10-24"
+      "facilityName": "舞鶴公園",
+      "date": "2026-11-07"
     },
     {
       "facilityName": "汐井公園",
@@ -112,6 +116,10 @@
     {
       "facilityName": "汐井公園",
       "date": "2026-11-03"
+    },
+    {
+      "facilityName": "汐井公園",
+      "date": "2026-11-07"
     }
   ],
   "slots": [
