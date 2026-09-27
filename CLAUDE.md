@@ -183,3 +183,9 @@ Claude Code はこのファイルを最初に読み、以下のゴール・手�
   (2) `src/lib/jpHoliday.js`（振替休日・国民の休日対応の祝日判定）で、取得後に
   `src/index.js` の `keepOnlySatSunHoliday()` が土日祝以外を除外する。
   (3) 混入・除外が起きたら `[filterResults]` / `[土日祝フィルタ]` の警告ログを出す。
+
+- **西南杜の湖畔公園を追加（2026-09-27）**: 対象施設は `config/settings.js` の
+  `facilityNames`（舞鶴・汐井・西南杜の湖畔）で管理。西南杜の湖畔公園は施設選択画面の
+  2ページ目にあるため、`src/steps/search.js` の `selectFacilities` が対象施設が
+  全てチェックできるまで「さらに読み込む」を押す（上限10回）。チェックできなかった
+  施設は `[selectFacilities]` の警告ログに出る（全滅時はエラー）。
