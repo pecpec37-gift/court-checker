@@ -1,0 +1,9 @@
+{
+  "name": "court-checker-trigger",
+  "private": true,
+  "type": "module",
+  "description": "「今すぐチェック」用の受け口（Cloudflare Worker）",
+  "scripts": {
+    "deploy": "npx wrangler deploy"
+  }
+}

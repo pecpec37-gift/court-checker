@@ -1,0 +1,17 @@
+# 「今すぐチェック」の受け口（Cloudflare Worker）の設定
+# 秘密情報はここに書かない。次のコマンドで Worker の Secrets に登録する：
+#   npx wrangler secret put GITHUB_TOKEN        （このリポジトリ限定・Actions: Read and write のみの fine-grained PAT）
+#   npx wrangler secret put TRIGGER_PASSPHRASE  （ページで入力する合言葉）
+name = "court-checker-trigger"
+main = "src/worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+GITHUB_OWNER = "pecpec37-gift"
+GITHUB_REPO = "court-checker"
+WORKFLOW_FILE = "check.yml"
+GITHUB_REF = "main"
+# ここに書いたオリジンのページからだけブラウザ経由で呼べる
+ALLOWED_ORIGINS = "https://pecpec37-gift.github.io"
+# 直近の実行（定刻実行も含む）からこの分数は再起動しない
+COOLDOWN_MINUTES = "10"

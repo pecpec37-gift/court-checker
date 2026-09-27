@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://*.workers.dev; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="今すぐチェック">
+<meta name="theme-color" content="#2e7d32">
+<title>今すぐチェック</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 16px;
+    background: #f5f7f5;
+    color: #1a1a1a;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  main { max-width: 480px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .lead { color: #555; font-size: 15px; margin: 0 0 20px; }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  label.field { display: block; font-weight: bold; margin-bottom: 6px; }
+  .pass-row { display: flex; gap: 8px; }
+  input[type="password"], input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    font-size: 18px;
+    padding: 12px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+  }
+  .toggle {
+    font-size: 15px;
+    padding: 0 12px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    background: #fafafa;
+    color: #333;
+  }
+  .remember { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 17px; }
+  .remember input { width: 22px; height: 22px; }
+  .saved-note { font-size: 14px; color: #2e7d32; margin: 8px 0 0; }
+  button.primary {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 16px;
+    font-size: 21px;
+    font-weight: bold;
+    color: #fff;
+    background: #2e7d32;
+    border: none;
+    border-radius: 12px;
+  }
+  button.primary:disabled { background: #9e9e9e; }
+  button.forget {
+    margin-top: 12px;
+    padding: 8px 12px;
+    font-size: 15px;
+    color: #c62828;
+    background: #fff;
+    border: 1px solid #c62828;
+    border-radius: 8px;
+  }
+  .status { border-radius: 12px; padding: 16px; margin-bottom: 16px; font-size: 17px; }
+  .status[hidden] { display: none; }
+  .status.pending { background: #e3f2fd; border: 2px solid #1e88e5; }
+  .status.success { background: #e8f5e9; border: 2px solid #2e7d32; }
+  .status.error { background: #ffebee; border: 2px solid #c62828; }
+  .status .title { font-weight: bold; font-size: 19px; margin: 0 0 4px; }
+  .status p { margin: 0; }
+  .links { text-align: center; margin-top: 8px; }
+  .links a { color: #1b5e20; font-weight: bold; }
+  footer { text-align: center; color: #888; font-size: 13px; margin-top: 24px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>今すぐ空き状況をチェック</h1>
+  <p class="lead">定刻（1日15回）とは別に、いま照会を1回だけ実行します。</p>
+
+  <div id="status" class="status" role="status" aria-live="polite" hidden>
+    <p class="title" id="status-title"></p>
+    <p id="status-text"></p>
+  </div>
+
+  <form class="card" id="form" autocomplete="on">
+    <!-- パスワード管理（自動入力）用。画面には出さない -->
+    <input type="text" name="username" value="court-checker" autocomplete="username" hidden>
+    <label class="field" for="passphrase">合言葉</label>
+    <div class="pass-row">
+      <input type="password" id="passphrase" name="password" autocomplete="current-password"
+             autocapitalize="off" autocorrect="off" spellcheck="false" required>
+      <button type="button" class="toggle" id="toggle">表示</button>
+    </div>
+    <label class="remember">
+      <input type="checkbox" id="remember">
+      この端末に保存する
+    </label>
+    <p class="saved-note" id="saved-note" hidden>保存済みの合言葉を使います</p>
+    <button type="submit" class="primary" id="run">今すぐチェック</button>
+    <button type="button" class="forget" id="forget" hidden>保存した合言葉を消す</button>
+  </form>
+
+  <p class="links"><a href="./index.html">空き状況ページを開く</a></p>
+  <footer>照会の起動だけができるページです。予約・申込は行いません。</footer>
+</main>
+
+<script>
+  // 受け口（Cloudflare Worker）の URL。公開されても困らない情報（合言葉ではない）
+  const TRIGGER_URL = "https://court-checker-trigger.YOUR-SUBDOMAIN.workers.dev";
+  const STORAGE_KEY = "court-checker.trigger.passphrase";
+  // 起動成功後、二度押し防止のためボタンを止めておく時間
+  const LOCK_AFTER_SUCCESS_MS = 60 * 1000;
+
+  const $ = (id) => document.getElementById(id);
+  const form = $("form");
+  const input = $("passphrase");
+  const remember = $("remember");
+  const runButton = $("run");
+  const forgetButton = $("forget");
+
+  function loadSaved() {
+    try { return localStorage.getItem(STORAGE_KEY) || ""; } catch { return ""; }
+  }
+  function save(value) {
+    try { localStorage.setItem(STORAGE_KEY, value); } catch { /* 保存できない環境では何もしない */ }
+  }
+  function forget() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch { /* 同上 */ }
+  }
+
+  function refreshSavedUi() {
+    const saved = loadSaved();
+    forgetButton.hidden = !saved;
+    $("saved-note").hidden = !(saved && input.value === saved);
+  }
+
+  function showStatus(kind, title, text) {
+    const box = $("status");
+    box.className = "status " + kind;
+    $("status-title").textContent = title;
+    $("status-text").textContent = text || "";
+    box.hidden = false;
+  }
+
+  function formatTime(date) {
+    return date.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Tokyo" });
+  }
+
+  // 初期表示：保存済みなら欄を埋めてすぐ押せる状態にする
+  const initial = loadSaved();
+  if (initial) {
+    input.value = initial;
+    remember.checked = true;
+  }
+  refreshSavedUi();
+
+  $("toggle").addEventListener("click", () => {
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
+    $("toggle").textContent = show ? "隠す" : "表示";
+  });
+
+  input.addEventListener("input", refreshSavedUi);
+
+  forgetButton.addEventListener("click", () => {
+    forget();
+    input.value = "";
+    remember.checked = false;
+    refreshSavedUi();
+    showStatus("success", "保存した合言葉を消しました", "次回は合言葉の入力が必要です。");
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const passphrase = input.value;
+    if (!passphrase) {
+      showStatus("error", "合言葉を入力してください", "");
+      return;
+    }
+    if (TRIGGER_URL.includes("YOUR-SUBDOMAIN")) {
+      showStatus("error", "受け口が未設定です", "trigger.html の TRIGGER_URL を設定してください。");
+      return;
+    }
+
+    runButton.disabled = true;
+    showStatus("pending", "起動しています…", "そのままお待ちください。");
+
+    let res, data;
+    try {
+      res = await fetch(TRIGGER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passphrase }),
+        cache: "no-store",
+      });
+      data = await res.json().catch(() => ({}));
+    } catch {
+      runButton.disabled = false;
+      showStatus("error", "通信に失敗しました", "電波の状態を確認して、もう一度お試しください。");
+      return;
+    }
+
+    // 保存の扱い：合言葉違い以外（＝合言葉は正しかった）なら、チェックに従って保存／削除
+    if (res.status === 401) {
+      if (loadSaved() === passphrase) forget();
+    } else if (remember.checked) {
+      save(passphrase);
+    } else {
+      forget();
+    }
+    refreshSavedUi();
+
+    if (res.ok && data.ok) {
+      showStatus(
+        "success",
+        `起動しました（${formatTime(new Date())}）`,
+        "照会には1〜2分かかります。2〜3分後に空き状況ページを開いて（開いている場合は更新して）ください。"
+      );
+      setTimeout(() => { runButton.disabled = false; }, LOCK_AFTER_SUCCESS_MS);
+      return;
+    }
+
+    runButton.disabled = false;
+    const message = data.message || `エラーが発生しました（${res.status}）`;
+    const titles = {
+      bad_passphrase: "合言葉が違います",
+      cooldown: "少し前に照会したばかりです",
+      running: "いま照会中です",
+    };
+    showStatus(
+      data.code === "running" ? "pending" : "error",
+      titles[data.code] || "起動に失敗しました",
+      data.code === "bad_passphrase" ? "入力し直して、もう一度お試しください。" : message
+    );
+    if (data.code === "bad_passphrase") {
+      input.select();
+    }
+  });
+</script>
+</body>
+</html>

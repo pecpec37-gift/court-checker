@@ -189,3 +189,17 @@ Claude Code はこのファイルを最初に読み、以下のゴール・手�
   2ページ目にあるため、`src/steps/search.js` の `selectFacilities` が対象施設が
   全てチェックできるまで「さらに読み込む」を押す（上限10回）。チェックできなかった
   施設は `[selectFacilities]` の警告ログに出る（全滅時はエラー）。
+
+- **「今すぐチェック」手動起動（2026-09-28追加）**: スマホ用ページ `docs/trigger.html` から
+  Cloudflare Worker（`trigger-worker/`）に合言葉を POST し、Worker が合言葉を検証して
+  `check.yml` を workflow_dispatch で起動する。GitHub は合言葉だけで起動できる入口を持たない
+  ため中継役として Worker を置いている。
+  - GitHub トークン（このリポジトリ限定・Actions: Read and write のみの fine-grained PAT）と
+    合言葉は **Worker の Secrets（`GITHUB_TOKEN` / `TRIGGER_PASSPHRASE`）にだけ**置く。
+    ページ・リポジトリには一切書かない。
+  - 連打防止: 直近の check.yml 実行（定刻含む）が実行中、または `COOLDOWN_MINUTES`（10分）以内
+    なら起動しない。合言葉違いは1.5秒待たせてから 401。呼び出し元は `ALLOWED_ORIGINS` で制限。
+  - ページ側の合言葉はパスワード欄。「この端末に保存する」ON なら localStorage に保存し次回自動入力、
+    OFF なら保存しない（既存の保存分も消す）。合言葉違いなら保存分を消す。
+  - Worker の URL は `docs/trigger.html` の `TRIGGER_URL` と CSP の `connect-src` に書く
+    （URL は秘密情報ではない）。Worker を変えたら `cd trigger-worker && npx wrangler deploy`。

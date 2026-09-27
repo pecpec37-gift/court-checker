@@ -272,7 +272,7 @@ function buildHtml(mergedSlots, facilityNames, generatedAt, comparisonInfo) {
   <p class="updated">最終更新: ${formatUpdatedAt(generatedAt)}</p>
   ${increaseSection}
   ${sections}
-  <footer>${facilityNames.map(escapeHtml).join("・")}（翌日から45日間／土日祝のみ）を自動照会しています。</footer>
+  <footer>${facilityNames.map(escapeHtml).join("・")}（翌日から45日間／土日祝のみ）を自動照会しています。<br><a href="./trigger.html">今すぐチェックする</a></footer>
 </body>
 </html>
 `;
