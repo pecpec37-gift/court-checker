@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://*.workers.dev; form-action 'none'; base-uri 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://court-checker-trigger.pecpec37.workers.dev; form-action 'none'; base-uri 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -121,7 +121,7 @@
 
 <script>
   // 受け口（Cloudflare Worker）の URL。公開されても困らない情報（合言葉ではない）
-  const TRIGGER_URL = "https://court-checker-trigger.YOUR-SUBDOMAIN.workers.dev";
+  const TRIGGER_URL = "https://court-checker-trigger.pecpec37.workers.dev";
   const STORAGE_KEY = "court-checker.trigger.passphrase";
   // 起動成功後、二度押し防止のためボタンを止めておく時間
   const LOCK_AFTER_SUCCESS_MS = 60 * 1000;
