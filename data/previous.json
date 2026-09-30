@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-29T23:36:40.707Z",
+  "generatedAt": "2026-09-30T00:15:01.999Z",
   "coveredDates": [
     {
       "facilityName": "舞鶴公園",
@@ -38,6 +38,10 @@
       "date": "2026-10-25"
     },
     {
+      "facilityName": "舞鶴公園",
+      "date": "2026-10-31"
+    },
+    {
       "facilityName": "汐井公園",
       "date": "2026-10-03"
     },
@@ -74,6 +78,10 @@
       "date": "2026-10-25"
     },
     {
+      "facilityName": "汐井公園",
+      "date": "2026-10-31"
+    },
+    {
       "facilityName": "西南杜の湖畔公園",
       "date": "2026-10-03"
     },
@@ -110,7 +118,7 @@
       "date": "2026-10-25"
     },
     {
-      "facilityName": "舞鶴公園",
+      "facilityName": "西南杜の湖畔公園",
       "date": "2026-10-31"
     },
     {
@@ -130,8 +138,8 @@
       "date": "2026-11-08"
     },
     {
-      "facilityName": "汐井公園",
-      "date": "2026-10-31"
+      "facilityName": "舞鶴公園",
+      "date": "2026-11-14"
     },
     {
       "facilityName": "汐井公園",
@@ -150,8 +158,8 @@
       "date": "2026-11-08"
     },
     {
-      "facilityName": "西南杜の湖畔公園",
-      "date": "2026-10-31"
+      "facilityName": "汐井公園",
+      "date": "2026-11-14"
     },
     {
       "facilityName": "西南杜の湖畔公園",
@@ -168,6 +176,10 @@
     {
       "facilityName": "西南杜の湖畔公園",
       "date": "2026-11-08"
+    },
+    {
+      "facilityName": "西南杜の湖畔公園",
+      "date": "2026-11-14"
     }
   ],
   "slots": [
