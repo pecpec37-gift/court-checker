@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-02T03:15:17.006Z",
+  "generatedAt": "2026-10-02T03:45:00.561Z",
   "coveredDates": [
     {
       "facilityName": "舞鶴公園",
@@ -195,16 +195,6 @@
     }
   ],
   "slots": [
-    {
-      "facilityName": "汐井公園",
-      "year": 2026,
-      "month": 10,
-      "day": 17,
-      "weekLabel": "土",
-      "courtName": "テニスコート(テニスコート１)",
-      "timeFrom": 720,
-      "timeTo": 780
-    },
     {
       "facilityName": "汐井公園",
       "year": 2026,
