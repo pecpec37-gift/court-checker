@@ -33,6 +33,18 @@ function courtDisplayLabel(facilityName, courtName) {
   return `${facilityName}（${courtLabel}）`;
 }
 
+// この時間数以上まとまって空いているコマは、赤色で目立たせる。
+const LONG_SLOT_HOURS = 2;
+
+function buildSlotItem(facilityName, s) {
+  const isLong = s.durationHours >= LONG_SLOT_HOURS;
+  return `
+        <li class="slot${isLong ? " long" : ""}">
+          <span class="court">${escapeHtml(courtDisplayLabel(facilityName, s.courtName))}</span>
+          <span class="time">${s.startLabel}〜${s.endLabel}（${s.durationHours}時間）</span>
+        </li>`;
+}
+
 function buildFacilitySection(facilityName, slots, emptyMessage) {
   if (slots.length === 0) {
     return `
@@ -51,18 +63,13 @@ function buildFacilitySection(facilityName, slots, emptyMessage) {
 
   const dateBlocks = [...byDate.entries()]
     .map(([dateLabel, dateSlots]) => {
-      const items = dateSlots
-        .map(
-          (s) => `
-        <li class="slot">
-          <span class="court">${escapeHtml(courtDisplayLabel(facilityName, s.courtName))}</span>
-          <span class="time">${s.startLabel}〜${s.endLabel}（${s.durationHours}時間）</span>
-        </li>`
-        )
-        .join("");
+      const items = dateSlots.map((s) => buildSlotItem(facilityName, s)).join("");
+      const longCount = dateSlots.filter((s) => s.durationHours >= LONG_SLOT_HOURS).length;
+      const longBadge =
+        longCount > 0 ? ` <span class="long-badge">${LONG_SLOT_HOURS}時間以上 ${longCount}件</span>` : "";
       return `
       <div class="date-block">
-        <h3>${escapeHtml(dateLabel)}</h3>
+        <h3>${escapeHtml(dateLabel)}${longBadge}</h3>
         <ul class="slot-list">${items}
         </ul>
       </div>`;
@@ -165,7 +172,7 @@ function buildHtml(mergedSlots, facilityNames, generatedAt, comparisonInfo) {
   .updated {
     color: #555;
     font-size: 15px;
-    margin: 0 0 20px;
+    margin: 0 0 8px;
   }
   .facility {
     background: #ffffff;
@@ -224,6 +231,42 @@ function buildHtml(mergedSlots, facilityNames, generatedAt, comparisonInfo) {
   .time {
     white-space: nowrap;
   }
+  .slot.long,
+  .increase .slot.long {
+    background: #ffebee;
+    border-left: 6px solid #d32f2f;
+  }
+  .slot.long .court,
+  .slot.long .time {
+    color: #c62828;
+    font-weight: bold;
+  }
+  .long-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: #d32f2f;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .legend {
+    font-size: 15px;
+    color: #555;
+    margin: 0 0 16px;
+  }
+  .legend .legend-mark {
+    display: inline-block;
+    padding: 0 8px;
+    border-radius: 6px;
+    border-left: 6px solid #d32f2f;
+    background: #ffebee;
+    color: #c62828;
+    font-weight: bold;
+  }
   footer {
     text-align: center;
     color: #888;
@@ -270,6 +313,7 @@ function buildHtml(mergedSlots, facilityNames, generatedAt, comparisonInfo) {
 <body>
   <h1>福岡市テニスコート 空き状況</h1>
   <p class="updated">最終更新: ${formatUpdatedAt(generatedAt)}</p>
+  <p class="legend"><span class="legend-mark">赤色</span> は${LONG_SLOT_HOURS}時間以上まとまって空いているコマです。</p>
   ${increaseSection}
   ${sections}
   <footer>${facilityNames.map(escapeHtml).join("・")}（翌日から45日間／土日祝のみ）を自動照会しています。<br><a href="./trigger.html">今すぐチェックする</a></footer>
