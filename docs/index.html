@@ -25,7 +25,7 @@
   .updated {
     color: #555;
     font-size: 15px;
-    margin: 0 0 20px;
+    margin: 0 0 8px;
   }
   .facility {
     background: #ffffff;
@@ -84,6 +84,42 @@
   .time {
     white-space: nowrap;
   }
+  .slot.long,
+  .increase .slot.long {
+    background: #ffebee;
+    border-left: 6px solid #d32f2f;
+  }
+  .slot.long .court,
+  .slot.long .time {
+    color: #c62828;
+    font-weight: bold;
+  }
+  .long-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: #d32f2f;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .legend {
+    font-size: 15px;
+    color: #555;
+    margin: 0 0 16px;
+  }
+  .legend .legend-mark {
+    display: inline-block;
+    padding: 0 8px;
+    border-radius: 6px;
+    border-left: 6px solid #d32f2f;
+    background: #ffebee;
+    color: #c62828;
+    font-weight: bold;
+  }
   footer {
     text-align: center;
     color: #888;
@@ -129,11 +165,12 @@
 </head>
 <body>
   <h1>福岡市テニスコート 空き状況</h1>
-  <p class="updated">最終更新: 2026年10月13日 00:00 JST</p>
+  <p class="updated">最終更新: 2026年10月13日 08:14 JST</p>
+  <p class="legend"><span class="legend-mark">赤色</span> は2時間以上まとまって空いているコマです。</p>
   
   <section class="increase">
     <h2>🆕 前回から増えた空き</h2>
-    <p class="compare-note">前回 2026年10月12日 23:31 JST との比較</p>
+    <p class="compare-note">前回 2026年10月13日 00:00 JST との比較</p>
     <p class="empty">なし</p>
   </section>
   
@@ -148,21 +185,8 @@
           <span class="time">9:00〜10:00（1時間）</span>
         </li>
         <li class="slot">
-          <span class="court">舞鶴公園（3番コート）</span>
-          <span class="time">9:00〜10:00（1時間）</span>
-        </li>
-        <li class="slot">
           <span class="court">舞鶴公園（2番コート）</span>
           <span class="time">15:00〜16:00（1時間）</span>
-        </li>
-        </ul>
-      </div>
-      <div class="date-block">
-        <h3>10/18(日)</h3>
-        <ul class="slot-list">
-        <li class="slot">
-          <span class="court">舞鶴公園（2番コート）</span>
-          <span class="time">9:00〜10:00（1時間）</span>
         </li>
         </ul>
       </div>
@@ -189,13 +213,13 @@
         </ul>
       </div>
       <div class="date-block">
-        <h3>10/18(日)</h3>
+        <h3>10/18(日) <span class="long-badge">2時間以上 1件</span></h3>
         <ul class="slot-list">
         <li class="slot">
           <span class="court">汐井公園（テニスコート１）</span>
           <span class="time">12:00〜13:00（1時間）</span>
         </li>
-        <li class="slot">
+        <li class="slot long">
           <span class="court">汐井公園（テニスコート３）</span>
           <span class="time">15:00〜17:00（2時間）</span>
         </li>
