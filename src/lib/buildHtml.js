@@ -322,4 +322,4 @@ function buildHtml(mergedSlots, facilityNames, generatedAt, comparisonInfo) {
 `;
 }
 
-module.exports = { buildHtml };
+module.exports = { buildHtml, escapeHtml, formatUpdatedAt, courtDisplayLabel, LONG_SLOT_HOURS };

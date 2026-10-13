@@ -1,7 +1,12 @@
 name: テニスコート空き照会
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      force_mail:
+        description: "テスト送信（時刻・送信済みに関係なくメールを送る）"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -29,11 +34,23 @@ jobs:
       - name: 空き状況を照会してHTMLを生成
         run: node src/index.js
 
+      # 1日1回（14:30以降の最初の回）だけ送る。判定は src/sendMail.js。
+      # 失敗してもページ更新（下のコミット・プッシュ）は止めない。
+      - name: 1日1回、空き状況をメールで送る
+        continue-on-error: true
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          FORCE_MAIL: ${{ inputs.force_mail }}
+        run: node src/sendMail.js
+
       - name: 変更があればコミット・プッシュ
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/index.html data/previous.json
+          if [ -f data/mail-state.json ]; then git add data/mail-state.json; fi
           if git diff --staged --quiet; then
             echo "変更なし"
           else

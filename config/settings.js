@@ -24,4 +24,19 @@ module.exports = {
   // 前回実行時の空き状況スナップショットの保存先
   // （「前回から増えた空き」の判定に使う）
   previousSnapshotPath: "data/previous.json",
+
+  // 1日1回のメール送信（src/sendMail.js）。
+  // 送信元・宛先・パスワードはここには書かず、GitHub の Secrets
+  // （GMAIL_USER / GMAIL_APP_PASSWORD / MAIL_TO）から環境変数で渡す。
+  mail: {
+    // この時刻（日本時間）以降の最初の実行で、その日まだ送っていなければ送る。
+    sendAfterJst: "14:30",
+
+    // 最後にメールを送った日と、その時点の空き状況スナップショットの保存先
+    // （「1日1回だけ送る」判定と「前回のメールから増えた空き」の比較に使う）
+    statePath: "data/mail-state.json",
+
+    // メール本文に載せる公開ページのURL
+    pageUrl: "https://pecpec37-gift.github.io/court-checker/",
+  },
 };

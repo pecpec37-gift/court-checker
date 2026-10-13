@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "nodemailer": "^10.1.0",
     "playwright": "^1.63.0"
   }
 }

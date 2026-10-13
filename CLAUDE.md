@@ -206,3 +206,19 @@ Claude Code はこのファイルを最初に読み、以下のゴール・手�
     OFF なら保存しない（既存の保存分も消す）。合言葉違いなら保存分を消す。
   - Worker の URL は `docs/trigger.html` の `TRIGGER_URL` と CSP の `connect-src` に書く
     （URL は秘密情報ではない）。Worker を変えたら `cd trigger-worker && npx wrangler deploy`。
+
+- **1日1回のメール送信（2026-10-14追加）**: `check.yml` の照会ステップの後で `src/sendMail.js` を
+  毎回実行し、**「日本時間14:30以降」かつ「その日まだ送っていない」回だけ**メールを送る
+  （実質14:44の回。その回が失敗・遅延しても次の回が送る。時刻は `config/settings.js` の
+  `mail.sendAfterJst`）。cron-job.org 側の変更は不要。
+  - 送信は Gmail SMTP（nodemailer）。送信元はボット専用の Gmail アカウント。
+    `GMAIL_USER` / `GMAIL_APP_PASSWORD` / `MAIL_TO` は **GitHub の Secrets にだけ**置き、
+    コード・ページには書かない。
+  - 送信した日付と送信時点のスナップショットを `data/mail-state.json` に保存する（コミット対象）。
+    メールの「増えた空き」は**前回のメール時点との比較**（ページの「前回から増えた空き」は
+    30分前の回との比較なので別物）。比較ロジックは `snapshot.js` の `computeNewlyVacantSlots` を共用。
+  - メール本文は `src/lib/buildMail.js`（メールアプリ向けにインラインスタイル＋テキスト版）。
+  - メールのステップは `continue-on-error: true`。失敗してもページ更新は止まらない。
+  - テスト送信: Actions の「Run workflow」で `force_mail` にチェック（時刻・送信済みに関係なく送り、
+    `data/mail-state.json` は更新しない）。ローカルで見た目だけ確認するなら
+    `MAIL_DRY_RUN=<出力先.html> node src/sendMail.js`（送信しない）。
