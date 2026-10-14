@@ -209,7 +209,7 @@ Claude Code はこのファイルを最初に読み、以下のゴール・手�
 
 - **1日1回のメール送信（2026-10-14追加）**: `check.yml` の照会ステップの後で `src/sendMail.js` を
   毎回実行し、**「日本時間14:30以降」かつ「その日まだ送っていない」回だけ**メールを送る
-  （実質14:44の回。その回が失敗・遅延しても次の回が送る。時刻は `config/settings.js` の
+  （実質14:30起動の回で、届くのは14:31ごろ。その回が失敗・遅延しても次の回が送る。時刻は `config/settings.js` の
   `mail.sendAfterJst`）。cron-job.org 側の変更は不要。
   - 送信は Gmail SMTP（nodemailer）。送信元はボット専用の Gmail アカウント。
     `GMAIL_USER` / `GMAIL_APP_PASSWORD` / `MAIL_TO` は **GitHub の Secrets にだけ**置き、
