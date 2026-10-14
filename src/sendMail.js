@@ -9,7 +9,7 @@ const { buildMail } = require("./lib/buildMail");
  * 1日1回だけ、直前に src/index.js が照会した空き状況をメールで送る。
  *
  * 送る条件: 日本時間で settings.mail.sendAfterJst 以降、かつその日まだ送っていない。
- * 30分ごとの実行のうち最初に条件を満たした回が送るので、その回が失敗・遅延しても
+ * 定期実行のうち最初に条件を満たした回が送るので、その回が失敗・遅延しても
  * 次の回が代わりに送る。送信済みの日付と送信時点のスナップショットは
  * settings.mail.statePath に記録し、次回メールの「増えた空き」の比較基準にする。
  *
@@ -72,7 +72,7 @@ async function main() {
     throw new Error(`空き状況のスナップショットを読めませんでした: ${snapshotPath}`);
   }
 
-  // 前回メール送信時点のスナップショットと比較する（30分前の回との比較ではない）。
+  // 前回メール送信時点のスナップショットと比較する（直前の回との比較ではない）。
   const { hasPrevious, previousGeneratedAt, newSlots } = computeNewlyVacantSlots(
     loadPreviousSnapshot(statePath),
     current.slots
