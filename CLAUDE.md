@@ -216,6 +216,10 @@ Claude Code はこのファイルを最初に読み、以下のゴール・手�
   - 送信は Gmail SMTP（nodemailer）。送信元はボット専用の Gmail アカウント。
     `GMAIL_USER` / `GMAIL_APP_PASSWORD` / `MAIL_TO` は **GitHub の Secrets にだけ**置き、
     コード・ページには書かない。
+  - `MAIL_TO` は**カンマ区切りで複数アドレス**を書ける（例: `a@example.com, b@example.com`）。
+    `sendMail.js` が分解し、空白・改行・空要素・重複を取り除いて**全員を BCC に入れて1通で送る**
+    （To は送信元の `GMAIL_USER` 自身。受信者同士にアドレスは見えない。2026-10-15変更）。
+    1アドレスだけでもそのまま動く。
   - 送信した日付と送信時点のスナップショットを `data/mail-state.json` に保存する（コミット対象）。
     メールの「増えた空き」は**前回のメール時点との比較**（ページの「前回から増えた空き」は
     直前の回との比較なので別物）。比較ロジックは `snapshot.js` の `computeNewlyVacantSlots` を共用。

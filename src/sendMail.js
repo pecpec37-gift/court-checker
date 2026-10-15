@@ -15,6 +15,8 @@ const { buildMail } = require("./lib/buildMail");
  *
  * 環境変数:
  *   GMAIL_USER / GMAIL_APP_PASSWORD / MAIL_TO  送信元・アプリパスワード・宛先（Secrets）
+ *                      MAIL_TO はカンマ区切りで複数アドレスを指定できる。
+ *                      宛先同士にアドレスが見えないよう全員 BCC で送る（To は送信元自身）
  *   FORCE_MAIL=true    テスト送信。時刻・送信済みに関係なく送り、記録は更新しない
  *   MAIL_DRY_RUN=<パス> 送信せず、メール本文のHTMLをそのパスに書き出す（見た目確認用）
  */
@@ -93,8 +95,11 @@ async function main() {
 
   const user = process.env.GMAIL_USER;
   const pass = (process.env.GMAIL_APP_PASSWORD || "").replace(/\s/g, "");
-  const to = process.env.MAIL_TO;
-  if (!user || !pass || !to) {
+  // MAIL_TO はカンマ区切りで複数指定できる。前後の空白・改行・全角カンマ・空要素・重複は取り除く。
+  const recipients = [
+    ...new Set((process.env.MAIL_TO || "").split(/[,，、;；\s]+/).filter(Boolean)),
+  ];
+  if (!user || !pass || recipients.length === 0) {
     throw new Error(
       "GMAIL_USER / GMAIL_APP_PASSWORD / MAIL_TO が設定されていません（GitHub の Secrets を確認してください）。"
     );
@@ -109,12 +114,14 @@ async function main() {
   });
   await transporter.sendMail({
     from: `"テニスコート空き照会" <${user}>`,
-    to,
+    // 受信者同士にアドレスが見えないよう、宛先は全員 BCC にして To は送信元自身にする。
+    to: user,
+    bcc: recipients,
     subject: mail.subject,
     text: mail.text,
     html: mail.html,
   });
-  console.log(`[メール] 送信しました: ${mail.subject}`);
+  console.log(`[メール] 送信しました（BCC ${recipients.length} 件）: ${mail.subject}`);
 
   if (force) {
     console.log("[メール] テスト送信のため、送信済みの記録は更新しません。");
