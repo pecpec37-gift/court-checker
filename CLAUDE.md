@@ -228,3 +228,13 @@ Claude Code はこのファイルを最初に読み、以下のゴール・手�
   - テスト送信: Actions の「Run workflow」で `force_mail` にチェック（時刻・送信済みに関係なく送り、
     `data/mail-state.json` は更新しない）。ローカルで見た目だけ確認するなら
     `MAIL_DRY_RUN=<出力先.html> node src/sendMail.js`（送信しない）。
+
+- **2バッチ目で止まる失敗への対策（2026-10-16追加）**: 10/14〜10/16に「`page.waitForURL: Timeout`
+  （`collectAvailability.js` の「次へ進む」後）」で失敗が続いた。成功回は各期間の空き候補が10件以内、
+  失敗回は10件超（＝2バッチ目がある日）で、トップからやり直した後の2バッチ目の「次へ進む」で
+  時間帯別空き状況へ進めていなかった（ローカルでは再現せず、Actions 上でのみ発生）。対策：
+  (1) `index.js` の `navigate()` 冒頭で `context.clearCookies()` し、毎回まっさらなセッションで始める
+  （前バッチの選択がサーバー側に残る問題の根本対策）。
+  (2) `goToTimeDetail` でチェック数が期待どおりか検証してから「次へ進む」。
+  (3) 遷移できなければ最大3回やり直し、`[collectAvailability]` の警告ログに画面上のメッセージを出す。
+  (4) 失敗時は `debug-screenshot.png` を Actions の Artifacts（7日保存）に残す。

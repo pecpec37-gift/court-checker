@@ -120,6 +120,10 @@ async function main() {
       // 必要があり、そのたびにこの手順を最初からやり直す
       // （collectAllAvailability 参照）。
       async function navigate() {
+        // 前バッチの選択状態がサーバー側のセッションに残っていると、次のバッチと
+        // 合算されて「最大10件まで」エラーで先へ進めなくなる。Cookie を消して
+        // 毎回まっさらなセッションで始める。
+        await context.clearCookies();
         await page.goto(settings.site.topUrl);
         await searchOutdoorTennis(page);
         await selectFacilities(page, settings.facilityNames);

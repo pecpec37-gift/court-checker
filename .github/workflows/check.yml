@@ -32,7 +32,19 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: 空き状況を照会してHTMLを生成
+        env:
+          DEBUG_SCREENSHOT_PATH: debug-screenshot.png
         run: node src/index.js
+
+      # 照会に失敗した時だけ、その時の画面を Actions の Artifacts に残す（原因調査用）
+      - name: 失敗時のスクリーンショットを保存
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-screenshot
+          path: debug-screenshot.png
+          if-no-files-found: ignore
+          retention-days: 7
 
       # 1日1回（14:30以降の最初の回）だけ送る。判定は src/sendMail.js。
       # 失敗してもページ更新（下のコミット・プッシュ）は止めない。

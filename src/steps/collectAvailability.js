@@ -231,14 +231,31 @@ async function collectAllAvailability(page, { batchSize, navigate }) {
   const allSlots = [];
 
   for (let i = 0; i < batches.length; i++) {
-    if (i > 0) {
-      await navigate();
-    }
-
     const batch = batches[i];
-    await selectCandidates(page, batch);
-    await page.getByRole("button", { name: "次へ進む" }).click();
-    await page.waitForURL(/AvailabilityCheckApplySelectTime/, { timeout: 20000 });
+    let lastError = null;
+
+    for (let attempt = 1; attempt <= MAX_BATCH_ATTEMPTS; attempt++) {
+      if (i > 0 || attempt > 1) {
+        await navigate();
+      }
+      try {
+        await goToTimeDetail(page, batch);
+        lastError = null;
+        if (attempt > 1) {
+          console.warn(`[collectAvailability] バッチ${i + 1}/${batches.length}: ${attempt}回目で成功`);
+        }
+        break;
+      } catch (err) {
+        lastError = err;
+        console.warn(
+          `[collectAvailability] バッチ${i + 1}/${batches.length}（${batch.length}件）で時間帯別空き状況に進めず ` +
+            `(試行${attempt}/${MAX_BATCH_ATTEMPTS}): ${err.message.split("\n")[0]}`
+        );
+        console.warn(`[collectAvailability] 画面上のメッセージ: ${(await readVisibleMessages(page)) || "（なし）"}`);
+      }
+    }
+    if (lastError) throw lastError;
+
     await page.waitForSelector("h3.facility-title");
     await page.waitForTimeout(1000);
 
@@ -247,6 +264,56 @@ async function collectAllAvailability(page, { batchSize, navigate }) {
   }
 
   return allSlots;
+}
+
+// 1バッチ分の「チェック→次へ進む→時間帯別空き状況へ遷移」を何回まで試すか
+const MAX_BATCH_ATTEMPTS = 3;
+
+/**
+ * batch のマスだけをチェックして「次へ進む」を押し、時間帯別空き状況へ
+ * 遷移するまで待つ。チェック数が合わない（Ajax更新前の古いグリッドを
+ * 触った等）場合は少し待って選び直し、それでも合わなければエラーにする。
+ */
+async function goToTimeDetail(page, batch) {
+  const countChecked = () =>
+    page.evaluate(
+      () => document.querySelectorAll("table.table-schedule label.btn-toggle input[type=checkbox]:checked").length
+    );
+
+  let checked = 0;
+  for (let i = 0; i < 3; i++) {
+    await selectCandidates(page, batch);
+    await page.waitForTimeout(500);
+    checked = await countChecked();
+    if (checked === batch.length) break;
+    await page.waitForTimeout(1500);
+  }
+  if (checked !== batch.length) {
+    throw new Error(`チェック数が合いません（期待${batch.length}件、実際${checked}件）`);
+  }
+
+  await page.getByRole("button", { name: "次へ進む" }).click();
+  await page.waitForURL(/AvailabilityCheckApplySelectTime/, { timeout: 20000 });
+}
+
+/**
+ * 遷移に失敗した時の原因調査用に、画面に出ているダイアログ・エラー表示の
+ * 文言を拾う（「選択可能数は、最大10件までです」など）。
+ */
+async function readVisibleMessages(page) {
+  return page
+    .evaluate(() => {
+      const selectors = [".modal.show", "[role=dialog]", "[role=alertdialog]", ".alert", ".validation-summary-errors", ".field-validation-error", ".error"];
+      const texts = new Set();
+      for (const el of document.querySelectorAll(selectors.join(","))) {
+        const style = getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") continue;
+        const t = el.innerText.replace(/\s+/g, " ").trim();
+        if (t) texts.add(t.slice(0, 200));
+      }
+      return Array.from(texts).join(" / ");
+    })
+    .catch(() => "");
 }
 
 module.exports = {
