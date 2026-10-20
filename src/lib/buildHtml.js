@@ -24,13 +24,28 @@ function formatUpdatedAt(date) {
   return `${y}年${m}月${d}日 ${hh}:${mm} JST`;
 }
 
-// courtName は「テニスコート（1番コート）」「テニスコート(テニスコート１)」の
-// ように「テニスコート」＋カッコ書きのコート番号という形式なので、カッコの
-// 中身だけを取り出して施設名と組み合わせる（例: 舞鶴公園（1番コート））。
+// 表示用の施設名。スマホで1行に収まるよう長い施設名だけ短くする
+// （照会・比較に使う facilityName 自体は変えない）。
+const FACILITY_DISPLAY_NAMES = {
+  西南杜の湖畔公園: "西南の杜",
+};
+
+function facilityDisplayName(facilityName) {
+  return FACILITY_DISPLAY_NAMES[facilityName] || facilityName;
+}
+
+// courtName は「テニスコート（1番コート）」「テニスコート(テニスコート１)」
+// 「テニス場(1番コート)」のように施設ごとに表記が違うので、カッコの中身から
+// コート番号を取り出して「1番コート」にそろえ、施設名と組み合わせる
+// （例: 汐井公園（1番コート））。番号が取れない場合はカッコの中身をそのまま使う。
 function courtDisplayLabel(facilityName, courtName) {
   const match = String(courtName).match(/[（(]([^）)]*)[）)]/);
-  const courtLabel = match ? match[1] : courtName;
-  return `${facilityName}（${courtLabel}）`;
+  const inner = match ? match[1] : String(courtName);
+  const numMatch = inner.match(/([0-9０-９]+)/);
+  const courtLabel = numMatch
+    ? `${numMatch[1].replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))}番コート`
+    : inner;
+  return `${facilityDisplayName(facilityName)}（${courtLabel}）`;
 }
 
 // この時間数以上まとまって空いているコマは、赤色で目立たせる。
@@ -49,7 +64,7 @@ function buildFacilitySection(facilityName, slots, emptyMessage) {
   if (slots.length === 0) {
     return `
     <section class="facility">
-      <h2>${escapeHtml(facilityName)}</h2>
+      <h2>${escapeHtml(facilityDisplayName(facilityName))}</h2>
       <p class="empty">${escapeHtml(emptyMessage)}</p>
     </section>`;
   }
@@ -78,7 +93,7 @@ function buildFacilitySection(facilityName, slots, emptyMessage) {
 
   return `
     <section class="facility">
-      <h2>${escapeHtml(facilityName)}</h2>
+      <h2>${escapeHtml(facilityDisplayName(facilityName))}</h2>
       ${dateBlocks}
     </section>`;
 }
@@ -316,10 +331,17 @@ function buildHtml(mergedSlots, facilityNames, generatedAt, comparisonInfo) {
   <p class="legend"><span class="legend-mark">赤色</span> は${LONG_SLOT_HOURS}時間以上まとまって空いているコマです。</p>
   ${increaseSection}
   ${sections}
-  <footer>${facilityNames.map(escapeHtml).join("・")}（翌日から45日間／土日祝のみ）を自動照会しています。<br><a href="./trigger.html">今すぐチェックする</a></footer>
+  <footer>${facilityNames.map((name) => escapeHtml(facilityDisplayName(name))).join("・")}（翌日から45日間／土日祝のみ）を自動照会しています。<br><a href="./trigger.html">今すぐチェックする</a></footer>
 </body>
 </html>
 `;
 }
 
-module.exports = { buildHtml, escapeHtml, formatUpdatedAt, courtDisplayLabel, LONG_SLOT_HOURS };
+module.exports = {
+  buildHtml,
+  escapeHtml,
+  formatUpdatedAt,
+  facilityDisplayName,
+  courtDisplayLabel,
+  LONG_SLOT_HOURS,
+};

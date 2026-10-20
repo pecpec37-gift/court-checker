@@ -1,4 +1,10 @@
-const { escapeHtml, formatUpdatedAt, courtDisplayLabel, LONG_SLOT_HOURS } = require("./buildHtml");
+const {
+  escapeHtml,
+  formatUpdatedAt,
+  facilityDisplayName,
+  courtDisplayLabel,
+  LONG_SLOT_HOURS,
+} = require("./buildHtml");
 
 // メールアプリは <style> やクラス指定を無視することがあるため、
 // 公開ページ（buildHtml.js）と同じ見た目をインラインスタイルで組み立てる。
@@ -36,7 +42,7 @@ function buildSlotRow(facilityName, s, normalBackground) {
 
 function buildFacilityBlock(facilityName, slots, { headingColor, borderColor, normalBackground, emptyMessage }) {
   const heading = `<h3 style="font-size:19px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid ${borderColor};color:${headingColor};">${escapeHtml(
-    facilityName
+    facilityDisplayName(facilityName)
   )}</h3>`;
 
   if (slots.length === 0) {
@@ -165,7 +171,7 @@ function buildMail(mergedSlots, facilityNames, checkedAt, comparisonInfo, pageUr
     ${sections}
     <p style="font-size:15px;margin:20px 0 0;"><a href="${escapeHtml(pageUrl)}" style="color:#2e7d32;font-weight:bold;">最新の空き状況をページで見る</a></p>
     <p style="color:#888;font-size:12px;margin:12px 0 0;">${facilityNames
-      .map(escapeHtml)
+      .map((name) => escapeHtml(facilityDisplayName(name)))
       .join("・")}（翌日から45日間／土日祝のみ）を自動照会し、1日1回お送りしています。</p>
   </div>
 </body>
@@ -173,7 +179,7 @@ function buildMail(mergedSlots, facilityNames, checkedAt, comparisonInfo, pageUr
 `;
 
   const textFacility = (facilityName, slots, emptyMessage) => {
-    const lines = [`■ ${facilityName}`];
+    const lines = [`■ ${facilityDisplayName(facilityName)}`];
     if (slots.length === 0) {
       lines.push(`  ${emptyMessage}`);
     } else {

@@ -238,3 +238,9 @@ Claude Code はこのファイルを最初に読み、以下のゴール・手�
   (2) `goToTimeDetail` でチェック数が期待どおりか検証してから「次へ進む」。
   (3) 遷移できなければ最大3回やり直し、`[collectAvailability]` の警告ログに画面上のメッセージを出す。
   (4) 失敗時は `debug-screenshot.png` を Actions の Artifacts（7日保存）に残す。
+
+- **施設名・コート名の表示短縮（2026-10-20追加）**: スマホで1行に収まるよう、表示だけ
+  `src/lib/buildHtml.js` の `facilityDisplayName()`（「西南杜の湖畔公園」→「西南の杜」）と
+  `courtDisplayLabel()`（カッコ内の番号を取り出し全施設「○番コート」に統一。例: 汐井公園の
+  「テニスコート１」→「1番コート」）で整える。ページ・メール（HTML／テキスト版）とも同じ関数を使う。
+  `facilityName` / `courtName` の生データ（照会・`previous.json`・比較キー）は変えていない。
