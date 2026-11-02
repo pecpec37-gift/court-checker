@@ -36,14 +36,14 @@ function facilityDisplayName(facilityName) {
 
 // courtName は「テニスコート（1番コート）」「テニスコート(テニスコート１)」
 // 「テニス場(1番コート)」のように施設ごとに表記が違うので、カッコの中身から
-// コート番号を取り出して「1番コート」にそろえ、施設名と組み合わせる
-// （例: 汐井公園（1番コート））。番号が取れない場合はカッコの中身をそのまま使う。
+// コート番号を取り出して「1番」にそろえ、施設名と組み合わせる
+// （例: 汐井公園（1番））。番号が取れない場合はカッコの中身をそのまま使う。
 function courtDisplayLabel(facilityName, courtName) {
   const match = String(courtName).match(/[（(]([^）)]*)[）)]/);
   const inner = match ? match[1] : String(courtName);
   const numMatch = inner.match(/([0-9０-９]+)/);
   const courtLabel = numMatch
-    ? `${numMatch[1].replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))}番コート`
+    ? `${numMatch[1].replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))}番`
     : inner;
   return `${facilityDisplayName(facilityName)}（${courtLabel}）`;
 }
