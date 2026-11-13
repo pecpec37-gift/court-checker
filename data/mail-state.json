@@ -1,6 +1,6 @@
 {
-  "sentDate": "2026-11-12",
-  "generatedAt": "2026-11-12T05:31:10.914Z",
+  "sentDate": "2026-11-13",
+  "generatedAt": "2026-11-13T05:31:22.996Z",
   "coveredDates": [
     {
       "facilityName": "舞鶴公園",
@@ -43,6 +43,10 @@
       "date": "2026-12-12"
     },
     {
+      "facilityName": "舞鶴公園",
+      "date": "2026-12-13"
+    },
+    {
       "facilityName": "汐井公園",
       "date": "2026-11-14"
     },
@@ -83,6 +87,10 @@
       "date": "2026-12-12"
     },
     {
+      "facilityName": "汐井公園",
+      "date": "2026-12-13"
+    },
+    {
       "facilityName": "西南杜の湖畔公園",
       "date": "2026-11-14"
     },
@@ -123,7 +131,7 @@
       "date": "2026-12-12"
     },
     {
-      "facilityName": "舞鶴公園",
+      "facilityName": "西南杜の湖畔公園",
       "date": "2026-12-13"
     },
     {
@@ -139,8 +147,8 @@
       "date": "2026-12-26"
     },
     {
-      "facilityName": "汐井公園",
-      "date": "2026-12-13"
+      "facilityName": "舞鶴公園",
+      "date": "2026-12-27"
     },
     {
       "facilityName": "汐井公園",
@@ -155,8 +163,8 @@
       "date": "2026-12-26"
     },
     {
-      "facilityName": "西南杜の湖畔公園",
-      "date": "2026-12-13"
+      "facilityName": "汐井公園",
+      "date": "2026-12-27"
     },
     {
       "facilityName": "西南杜の湖畔公園",
@@ -169,6 +177,10 @@
     {
       "facilityName": "西南杜の湖畔公園",
       "date": "2026-12-26"
+    },
+    {
+      "facilityName": "西南杜の湖畔公園",
+      "date": "2026-12-27"
     }
   ],
   "slots": [
@@ -176,21 +188,11 @@
       "facilityName": "舞鶴公園",
       "year": 2026,
       "month": 11,
-      "day": 15,
-      "weekLabel": "日",
-      "courtName": "テニスコート（2番コート）",
+      "day": 21,
+      "weekLabel": "土",
+      "courtName": "テニスコート（1番コート）",
       "timeFrom": 540,
       "timeTo": 600
-    },
-    {
-      "facilityName": "舞鶴公園",
-      "year": 2026,
-      "month": 11,
-      "day": 22,
-      "weekLabel": "日",
-      "courtName": "テニスコート（1番コート）",
-      "timeFrom": 420,
-      "timeTo": 480
     },
     {
       "facilityName": "汐井公園",
@@ -301,16 +303,6 @@
       "courtName": "テニス場(2番コート)",
       "timeFrom": 960,
       "timeTo": 1020
-    },
-    {
-      "facilityName": "西南杜の湖畔公園",
-      "year": 2026,
-      "month": 11,
-      "day": 15,
-      "weekLabel": "日",
-      "courtName": "テニス場(1番コート)",
-      "timeFrom": 660,
-      "timeTo": 720
     }
   ]
 }
