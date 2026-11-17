@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17T15:00:14.082Z",
+  "generatedAt": "2026-11-17T23:31:33.201Z",
   "coveredDates": [
     {
       "facilityName": "舞鶴公園",
@@ -458,6 +458,16 @@
       "courtName": "テニス場(4番コート)",
       "timeFrom": 720,
       "timeTo": 780
+    },
+    {
+      "facilityName": "西南杜の湖畔公園",
+      "year": 2026,
+      "month": 11,
+      "day": 29,
+      "weekLabel": "日",
+      "courtName": "テニス場(2番コート)",
+      "timeFrom": 600,
+      "timeTo": 660
     },
     {
       "facilityName": "西南杜の湖畔公園",
