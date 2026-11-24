@@ -210,9 +210,13 @@ Claude Code はこのファイルを最初に読み、以下のゴール・手�
     （URL は秘密情報ではない）。Worker を変えたら `cd trigger-worker && npx wrangler deploy`。
 
 - **1日1回のメール送信（2026-10-14追加）**: `check.yml` の照会ステップの後で `src/sendMail.js` を
-  毎回実行し、**「日本時間14:30以降」かつ「その日まだ送っていない」回だけ**メールを送る
-  （実質14:30起動の回で、届くのは14:31ごろ。その回が失敗・遅延しても次の回が送る。時刻は `config/settings.js` の
-  `mail.sendAfterJst`）。cron-job.org 側の変更は不要。
+  毎回実行し、**14:30の回だけ**メールを送る（2026-11-24変更。以前は「14:30以降で当日未送信なら送る」だった）。
+  - 判定はジョブの開始時刻（日本時間。`check.yml` の最初のステップで `RUN_STARTED_AT` に記録）で行う
+    （`sendMail.js` の `decideMail`）。時間帯は `config/settings.js` の `mail.sendWindows`：
+    main 14:30〜14:50 に開始した回が、その日未送信なら送る。fallback 15:00〜15:20 に開始した回は、
+    **14:30の回が失敗・遅延して送れなかった日だけ**代わりに送る（送信済みなら送らないので二重送信しない）。
+    それ以外の回は一切送らない。main を14:50で切るのは、遅れた14:30の回と15:00の回の重なりを避けるため。
+  - 前提: cron-job.org に 14:30 と 15:00 の起動枠があること（枠が無いとその日はメールが出ない）。
   - 送信は Gmail SMTP（nodemailer）。送信元はボット専用の Gmail アカウント。
     `GMAIL_USER` / `GMAIL_APP_PASSWORD` / `MAIL_TO` は **GitHub の Secrets にだけ**置き、
     コード・ページには書かない。

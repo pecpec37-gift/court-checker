@@ -19,6 +19,10 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      # メールを送る回（14:30の回／15:00の代替）の判定に使うため、ジョブの開始時刻を記録する。
+      - name: 開始時刻を記録
+        run: echo "RUN_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v7
@@ -46,7 +50,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      # 1日1回（14:30以降の最初の回）だけ送る。判定は src/sendMail.js。
+      # 1日1回、14:30の回だけ送る（送れなかった日は15:00の回が代わりに送る）。判定は src/sendMail.js。
       # 失敗してもページ更新（下のコミット・プッシュ）は止めない。
       - name: 1日1回、空き状況をメールで送る
         continue-on-error: true
