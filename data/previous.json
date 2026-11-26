@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T06:31:18.113Z",
+  "generatedAt": "2026-11-26T05:03:42.537Z",
   "coveredDates": [
     {
       "facilityName": "舞鶴公園",
@@ -34,6 +34,10 @@
       "date": "2026-12-20"
     },
     {
+      "facilityName": "舞鶴公園",
+      "date": "2026-12-26"
+    },
+    {
       "facilityName": "汐井公園",
       "date": "2026-11-28"
     },
@@ -66,6 +70,10 @@
       "date": "2026-12-20"
     },
     {
+      "facilityName": "汐井公園",
+      "date": "2026-12-26"
+    },
+    {
       "facilityName": "西南杜の湖畔公園",
       "date": "2026-11-28"
     },
@@ -98,7 +106,7 @@
       "date": "2026-12-20"
     },
     {
-      "facilityName": "舞鶴公園",
+      "facilityName": "西南杜の湖畔公園",
       "date": "2026-12-26"
     },
     {
@@ -118,8 +126,8 @@
       "date": "2027-01-03"
     },
     {
-      "facilityName": "汐井公園",
-      "date": "2026-12-26"
+      "facilityName": "舞鶴公園",
+      "date": "2027-01-09"
     },
     {
       "facilityName": "汐井公園",
@@ -138,8 +146,8 @@
       "date": "2027-01-03"
     },
     {
-      "facilityName": "西南杜の湖畔公園",
-      "date": "2026-12-26"
+      "facilityName": "汐井公園",
+      "date": "2027-01-09"
     },
     {
       "facilityName": "西南杜の湖畔公園",
@@ -156,6 +164,10 @@
     {
       "facilityName": "西南杜の湖畔公園",
       "date": "2027-01-03"
+    },
+    {
+      "facilityName": "西南杜の湖畔公園",
+      "date": "2027-01-09"
     }
   ],
   "slots": [
@@ -263,19 +275,19 @@
       "facilityName": "汐井公園",
       "year": 2026,
       "month": 12,
-      "day": 20,
-      "weekLabel": "日",
+      "day": 26,
+      "weekLabel": "土",
       "courtName": "テニスコート(テニスコート１)",
-      "timeFrom": 780,
-      "timeTo": 840
+      "timeFrom": 960,
+      "timeTo": 1020
     },
     {
       "facilityName": "汐井公園",
       "year": 2026,
       "month": 12,
-      "day": 20,
-      "weekLabel": "日",
-      "courtName": "テニスコート(テニスコート４)",
+      "day": 26,
+      "weekLabel": "土",
+      "courtName": "テニスコート(テニスコート３)",
       "timeFrom": 960,
       "timeTo": 1020
     },
@@ -296,28 +308,8 @@
       "day": 28,
       "weekLabel": "土",
       "courtName": "テニス場(2番コート)",
-      "timeFrom": 540,
-      "timeTo": 600
-    },
-    {
-      "facilityName": "西南杜の湖畔公園",
-      "year": 2026,
-      "month": 11,
-      "day": 28,
-      "weekLabel": "土",
-      "courtName": "テニス場(2番コート)",
       "timeFrom": 840,
       "timeTo": 900
-    },
-    {
-      "facilityName": "西南杜の湖畔公園",
-      "year": 2026,
-      "month": 11,
-      "day": 28,
-      "weekLabel": "土",
-      "courtName": "テニス場(2番コート)",
-      "timeFrom": 960,
-      "timeTo": 1020
     },
     {
       "facilityName": "西南杜の湖畔公園",
@@ -343,51 +335,11 @@
       "facilityName": "汐井公園",
       "year": 2026,
       "month": 12,
-      "day": 26,
-      "weekLabel": "土",
-      "courtName": "テニスコート(テニスコート１)",
-      "timeFrom": 960,
-      "timeTo": 1020
-    },
-    {
-      "facilityName": "汐井公園",
-      "year": 2026,
-      "month": 12,
-      "day": 26,
-      "weekLabel": "土",
-      "courtName": "テニスコート(テニスコート３)",
-      "timeFrom": 960,
-      "timeTo": 1020
-    },
-    {
-      "facilityName": "汐井公園",
-      "year": 2026,
-      "month": 12,
       "day": 27,
       "weekLabel": "日",
       "courtName": "テニスコート(テニスコート２)",
       "timeFrom": 540,
       "timeTo": 600
-    },
-    {
-      "facilityName": "汐井公園",
-      "year": 2026,
-      "month": 12,
-      "day": 27,
-      "weekLabel": "日",
-      "courtName": "テニスコート(テニスコート３)",
-      "timeFrom": 900,
-      "timeTo": 960
-    },
-    {
-      "facilityName": "汐井公園",
-      "year": 2026,
-      "month": 12,
-      "day": 27,
-      "weekLabel": "日",
-      "courtName": "テニスコート(テニスコート３)",
-      "timeFrom": 960,
-      "timeTo": 1020
     },
     {
       "facilityName": "汐井公園",
